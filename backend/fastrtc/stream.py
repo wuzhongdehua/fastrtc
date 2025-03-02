@@ -592,11 +592,19 @@ class Stream(WebRTCConnectionMixin):
         host = urllib.parse.urlparse(url).netloc
 
         URL = "https://api.fastrtc.org"
-        r = httpx.post(
-            URL + "/register",
-            json={"url": host},
-            headers={"Authorization": token or get_token() or ""},
-        )
+        try:
+            r = httpx.post(
+                URL + "/register",
+                json={"url": host},
+                headers={"Authorization": token or get_token() or ""},
+            )
+        except Exception:
+            URL = "https://fastrtc-fastphone.hf.space"
+            r = httpx.post(
+                URL + "/register",
+                json={"url": host},
+                headers={"Authorization": token or get_token() or ""},
+            )
         r.raise_for_status()
         data = r.json()
         code = f"{data['code']}"
